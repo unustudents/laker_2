@@ -7,7 +7,6 @@ class UserModels extends UserEntity {
     required super.division,
     required super.birthDate,
     required super.whatsapp,
-    required super.password,
   });
   factory UserModels.fromJson(Map<String, dynamic> json) {
     return UserModels(
@@ -16,7 +15,6 @@ class UserModels extends UserEntity {
       division: json['division'],
       birthDate: DateTime.parse(json['birthDate']),
       whatsapp: json['whatsapp'],
-      password: json['password'],
     );
   }
   Map<String, dynamic> toJson() {
@@ -26,7 +24,6 @@ class UserModels extends UserEntity {
       'division': division,
       'birthDate': birthDate.toIso8601String(),
       'whatsapp': whatsapp,
-      'password': password,
     };
   }
 
@@ -36,6 +33,5 @@ class UserModels extends UserEntity {
         division: division,
         birthDate: birthDate,
         whatsapp: whatsapp,
-        password: password,
       );
 }

@@ -6,13 +6,11 @@ class UserEntity extends Equatable {
   final String division;
   final DateTime birthDate;
   final String whatsapp;
-  final String password;
 
-  const UserEntity(
-      {required this.email, required this.name, required this.division, required this.birthDate, required this.whatsapp, required this.password});
+  const UserEntity({required this.email, required this.name, required this.division, required this.birthDate, required this.whatsapp});
 
   @override
   List<Object> get props {
-    return [email, name, division, birthDate, whatsapp, password];
+    return [email, name, division, birthDate, whatsapp];
   }
 }

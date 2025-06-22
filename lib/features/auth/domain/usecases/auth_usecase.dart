@@ -9,14 +9,14 @@ class RegisterUseCase {
 
   RegisterUseCase(this._repository);
 
-  Future<Either<Failure, UserEntity>> call(UserEntity params) async {
+  Future<Either<Failure, UserEntity>> call({required UserEntity params, required String passwd}) async {
     return await _repository.registerUser(
       email: params.email,
       name: params.name,
       division: params.division,
       birthDate: params.birthDate,
       whatsapp: params.whatsapp,
-      password: params.password,
+      password: passwd,
     );
   }
 }
@@ -26,10 +26,10 @@ class LoginUseCase {
 
   LoginUseCase(this._repository);
 
-  Future<Either<Failure, UserEntity>> call(UserEntity params) async {
+  Future<Either<Failure, UserEntity>> call({required String email, required String passwd}) async {
     return await _repository.login(
-      email: params.email,
-      password: params.password,
+      email: email,
+      password: passwd,
     );
   }
 }
