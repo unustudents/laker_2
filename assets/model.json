@@ -1,0 +1,21 @@
+{
+    "user": {
+        "name": "Nanda",
+        "email": "nanda@email.com"
+    },
+    "create_quiz": {
+        "title": "ini judul",
+        "description": "",
+        "category": "JKAshhladfhaid123"
+    },
+    "quiz": {
+        "question": "ini pertanyaan",
+        "options": [
+            "jawaban benar",
+            "jawaban 2",
+            "jawaban 3",
+            "jawaban 4"
+        ],
+        "true": "jawaban benar"
+    }
+}
