@@ -56,6 +56,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:laker_2/gen/assets.gen.dart';
+import 'package:laker_2/routes/app_router.dart';
 
 import '../cubit/splash_cubit.dart';
 import '../cubit/splash_state.dart';
@@ -78,11 +80,9 @@ class SplashScreen extends HookWidget {
     return BlocListener<SplashCubit, SplashState>(
       listener: (context, state) {
         if (state is SplashNavigateToHome) {
-          // TODO: Sesuaikan route name sesuai dengan app_router
-          Navigator.of(context).pushReplacementNamed('/home');
+          HomeRoute().pushReplacement(context);
         } else if (state is SplashNavigateToSignIn) {
-          // TODO: Sesuaikan route name sesuai dengan app_router
-          Navigator.of(context).pushReplacementNamed('/signin');
+          SigninRoute().pushReplacement(context);
         } else if (state is SplashError) {
           ScaffoldMessenger.of(
             context,
@@ -99,16 +99,9 @@ class SplashScreen extends HookWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // TODO: Ganti dengan path asset yang sesuai
-                    // Expanded(child: Image.asset(AppTexts.logoPMII)),
-                    const Expanded(child: Placeholder(fallbackHeight: 50)),
+                    Expanded(child: Aset.images.logoPmii.image()),
                     const SizedBox(width: 10),
-                    // TODO: Ganti dengan path asset yang sesuai
-                    // Image.asset(AppTexts.logo, width: screenWidth / 3),
-                    SizedBox(
-                      width: screenWidth / 3,
-                      child: const Placeholder(fallbackHeight: 80),
-                    ),
+                    Aset.images.logoPng.image(width: screenWidth / 3),
                   ],
                 ),
                 const SizedBox(height: 20),

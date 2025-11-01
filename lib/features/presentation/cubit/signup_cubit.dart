@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../domain/entities/signup_entity.dart';
 import '../../domain/usecases/signup_usecase.dart';
 
 part 'signup_state.dart';
@@ -8,33 +9,19 @@ part 'signup_state.dart';
 class SignupCubit extends Cubit<SignupState> {
   final SignupUsecase _signupUsecase;
 
-  SignupCubit({required SignupUsecase signupUsecase})
+  SignupCubit({required signupUsecase})
     : _signupUsecase = signupUsecase,
       super(SignupInitial());
 
-  Future<void> signup({
-    required String email,
-    required String name,
-    required String division,
-    required DateTime birthDate,
-    required String whatsapp,
-    required String password,
-  }) async {
-    if (!_validateInputs(email, name, password)) {
+  Future<void> signup(SignupEntity data) async {
+    if (!_validateInputs(data.email, data.name, data.password)) {
       emit(const SignupError('Validasi input gagal'));
       return;
     }
 
     emit(SignupLoading());
 
-    final result = await _signupUsecase(
-      email: email,
-      name: name,
-      division: division,
-      birthDate: birthDate,
-      whatsapp: whatsapp,
-      password: password,
-    );
+    final result = await _signupUsecase(data);
 
     result.fold(
       (failure) => emit(SignupError(failure.msg)),

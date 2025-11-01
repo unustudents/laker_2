@@ -32,21 +32,22 @@ class MateriScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)?.settings.arguments as String? ?? '';
+    final args =
+        (ModalRoute.of(context)?.settings.arguments as String?) ??
+        '';
 
     return BlocBuilder<MateriCubit, MateriState>(
       builder: (context, state) {
         // Initialize Cubit dengan uid dari arguments
         if (state is MateriInitial) {
-          context.read<MateriCubit>().initialize(arguments);
+          context.read<MateriCubit>().initialize(args);
         }
 
         return Scaffold(
           appBar: AppBar(title: const Text('Materi'), centerTitle: true),
-          body: _buildBody(context, state, arguments),
+          body: _buildBody(context, state, args),
           floatingActionButton: _FloatingActionButtonWidget(
-            uid: arguments,
+            uid: args,
             isMateriEmpty: context.read<MateriCubit>().isMateriEmpty(),
           ),
         );

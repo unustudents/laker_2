@@ -107,8 +107,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:laker_2/routes/app_router.dart';
 
 import '../../../core/utils/form_field.dart' show Formulir;
+import '../../domain/entities/signup_entity.dart';
 import '../cubit/signup_cubit.dart';
 
 class SignUpScreen extends HookWidget {
@@ -147,11 +149,11 @@ class SignUpScreen extends HookWidget {
             shrinkWrap: true,
             children: [
               Text(
-                "Sign Up",
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(fontWeight: FontWeight.w600),
+                "Register",
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).primaryColor,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 15),
@@ -164,10 +166,7 @@ class SignUpScreen extends HookWidget {
               const SizedBox(height: 15),
               Formulir.formReguler(labelText: "Divisi", controller: divisi),
               const SizedBox(height: 15),
-              Formulir.formPhone(
-                labelText: "Whatsapp",
-                controller: whatsapp,
-              ),
+              Formulir.formPhone(labelText: "Whatsapp", controller: whatsapp),
               const SizedBox(height: 15),
               Formulir.formEmail(labelText: "Email", controller: email),
               const SizedBox(height: 15),
@@ -182,15 +181,14 @@ class SignUpScreen extends HookWidget {
               BlocConsumer<SignupCubit, SignupState>(
                 listener: (context, state) {
                   if (state is SignupSuccess) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
-                    // TODO: Navigate ke signin screen
-                    Navigator.pushNamed(context, '/signin');
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(state.message)));
+                    SigninRoute().pushReplacement(context);
                   } else if (state is SignupError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(state.message)));
                   }
                 },
                 builder: (context, state) {
@@ -201,13 +199,15 @@ class SignUpScreen extends HookWidget {
                         : () {
                             if (formKey.currentState!.validate()) {
                               context.read<SignupCubit>().signup(
-                                    email: email.text,
-                                    name: name.text,
-                                    division: divisi.text,
-                                    birthDate: DateTime.now(),
-                                    whatsapp: whatsapp.text,
-                                    password: password.text,
-                                  );
+                                SignupEntity(
+                                  email: email.text,
+                                  name: name.text,
+                                  divisi: divisi.text,
+                                  password: password.text,
+                                  tempLahir: tempatLahir.text,
+                                  wa: whatsapp.text,
+                                ),
+                              );
                             }
                           },
                     child: isLoading
@@ -225,7 +225,7 @@ class SignUpScreen extends HookWidget {
                 children: [
                   const Text("Have an account yet? "),
                   GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/signin'),
+                    onTap: () => SigninRoute().pushReplacement(context),
                     child: Text(
                       'Sign In',
                       style: TextStyle(
@@ -237,7 +237,7 @@ class SignUpScreen extends HookWidget {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

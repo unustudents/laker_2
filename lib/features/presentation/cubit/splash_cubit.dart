@@ -1,37 +1,44 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'splash_state.dart';
 
 class SplashCubit extends Cubit<SplashState> {
-  final FirebaseAuth _firebaseAuth;
+  /// Instance Supabase client untuk cek session user
+  final SupabaseClient _supabaseClient;
 
-  SplashCubit({FirebaseAuth? firebaseAuth})
-    : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+  /// Constructor yang menerima [SupabaseClient] untuk operasi autentikasi
+  SplashCubit({SupabaseClient? supabaseClient})
+    : _supabaseClient = supabaseClient ?? Supabase.instance.client,
       super(SplashInitial());
 
   /// Initialize splash screen and handle authentication routing
   Future<void> initializeSplash() async {
     try {
+      // Emit loading state untuk menunjukkan splash screen sedang loading
       emit(SplashLoading());
 
-      // Set immersive UI mode (fullscreen without status bar)
+      // Set immersive UI mode (fullscreen tanpa status bar dan navigation bar)
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-      // Listen to Firebase auth state changes
-      _firebaseAuth.authStateChanges().listen((User? user) {
-        // Delay navigation untuk menunjukkan splash screen
-        Future.delayed(const Duration(seconds: 3), () {
-          if (user != null && user.emailVerified) {
-            emit(SplashNavigateToHome());
-          } else {
-            emit(SplashNavigateToSignIn());
-          }
-        });
-      });
+      // Delay selama 3 detik untuk menampilkan splash screen dengan baik
+      await Future.delayed(const Duration(seconds: 3));
+
+      // Cek session Supabase untuk user yang sudah authenticated
+      final session = _supabaseClient.auth.currentSession;
+
+      // Jika ada session, user sudah login (session.user pasti not null)
+      if (session != null) {
+        // Navigate ke Home screen
+        emit(SplashNavigateToHome());
+      } else {
+        // Tidak ada session, user harus login
+        emit(SplashNavigateToSignIn());
+      }
     } catch (e) {
-      emit(SplashError(e.toString()));
+      // Tangani error saat initialize splash
+      emit(SplashError('Kesalahan saat initialize splash: ${e.toString()}'));
     }
   }
 

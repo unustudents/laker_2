@@ -107,9 +107,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:laker_2/features/presentation/cubit/signin_cubit.dart';
 
 import '../../../core/utils/form_field.dart' show Formulir;
+import '../../../routes/app_router.dart';
+import '../../presentation/cubit/signin_cubit.dart';
 
 class SignInScreen extends HookWidget {
   const SignInScreen({super.key});
@@ -120,6 +121,7 @@ class SignInScreen extends HookWidget {
     final email = useTextEditingController();
     final password = useTextEditingController();
     final isPasswordVisible = useState(false);
+    final formKey = useMemoized(() => GlobalKey<FormState>());
 
     // Cleanup controllers saat widget di-dispose
     useEffect(() {
@@ -130,103 +132,109 @@ class SignInScreen extends HookWidget {
     }, []);
 
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ListView(
-            padding: const EdgeInsets.all(20),
-            shrinkWrap: true,
-            children: [
-              Text(
-                'Welcome !',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 47),
-              Formulir.formEmail(labelText: 'Email', controller: email),
-              const SizedBox(height: 24),
-              Formulir.formPasswd(
-                onPressed: () =>
-                    isPasswordVisible.value = !isPasswordVisible.value,
-                labelText: 'Password',
-                controller: password,
-                obscureText: !isPasswordVisible.value,
-              ),
-              const SizedBox(height: 14),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Forgot password feature coming soon'),
-                      ),
-                    ),
-                    child: Text(
-                      'Forgot password ?',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+      body: Form(
+        key: formKey,
+        child: SafeArea(
+          child: Center(
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              shrinkWrap: true,
+              children: [
+                Text(
+                  'Welcome !',
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).primaryColor,
                   ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              BlocConsumer<SigninCubit, SigninState>(
-                listener: (context, state) {
-                  if (state is SigninSuccess) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Login successful')),
-                    );
-                    // TODO: Navigate ke home screen
-                  } else if (state is SigninError) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text(state.message)));
-                  }
-                },
-                builder: (context, state) {
-                  final isLoading = state is SigninLoading;
-                  return ElevatedButton(
-                    onPressed: isLoading
-                        ? null
-                        : () => context.read<SigninCubit>().signin(
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 47),
+                Formulir.formEmail(labelText: 'Email', controller: email),
+                const SizedBox(height: 24),
+                Formulir.formPasswd(
+                  onPressed: () =>
+                      isPasswordVisible.value = !isPasswordVisible.value,
+                  labelText: 'Password',
+                  controller: password,
+                  obscureText: !isPasswordVisible.value,
+                ),
+                const SizedBox(height: 14),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   children: [
+                //     GestureDetector(
+                //       onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                //         const SnackBar(
+                //           content: Text('Forgot password feature coming soon'),
+                //         ),
+                //       ),
+                //       child: Text(
+                //         'Forgot password ?',
+                //         style: TextStyle(
+                //           color: Theme.of(context).primaryColor,
+                //           fontWeight: FontWeight.w500,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                const SizedBox(height: 24),
+                BlocConsumer<SigninCubit, SigninState>(
+                  listener: (context, state) {
+                    // TODO: Remove snackbar messages in production
+                    if (state is SigninSuccess) {
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   const SnackBar(content: Text('Login successful')),
+                      // );
+                      const HomeRoute().pushReplacement(context);
+                      // TODO: Navigate ke home screen
+                    } else if (state is SigninError) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(state.message)));
+                    }
+                  },
+                  builder: (context, state) {
+                    final isLoading = state is SigninLoading;
+                    return ElevatedButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate() && !isLoading) {
+                          context.read<SigninCubit>().signin(
                             email: email.text,
                             password: password.text,
-                          ),
-                    child: isLoading
-                        ? const CircularProgressIndicator(
-                            backgroundColor: Colors.amber,
-                            color: Colors.white,
-                          )
-                        : const Text('Login'),
-                  );
-                },
-              ),
-              const SizedBox(height: 58),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account yet? "),
-                  GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/sign-up'),
-                    child: Text(
-                      'Register',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        decorationColor: Colors.black54,
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.bold,
+                          );
+                        }
+                      },
+                      child: isLoading
+                          ? const CircularProgressIndicator(
+                              backgroundColor: Colors.amber,
+                              color: Colors.white,
+                            )
+                          : const Text('Login'),
+                    );
+                  },
+                ),
+                const SizedBox(height: 58),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account yet? "),
+                    GestureDetector(
+                      onTap: () => SignupRoute().pushReplacement(context),
+                      child: Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          decorationColor: Colors.black54,
+                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

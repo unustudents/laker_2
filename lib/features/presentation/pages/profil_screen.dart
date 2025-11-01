@@ -153,7 +153,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../routes/app_routes.dart';
+import '../../../routes/app_router.dart';
 import '../cubit/profile_cubit.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -164,11 +164,12 @@ class ProfileScreen extends StatelessWidget {
     return BlocListener<ProfileCubit, ProfileState>(
       listener: (context, state) {
         if (state is ProfileSignoutSuccess) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            RouteName.signin,
-            (route) => false,
-          );
+          // Navigator.pushNamedAndRemoveUntil(
+          //   context,
+          //   signin,
+          //   (route) => false,
+          // );
+          SigninRoute().push(context);
         }
         if (state is ProfileError) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -181,11 +182,14 @@ class ProfileScreen extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               leading: IconButton(
-                onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  RouteName.home,
-                  (route) => false,
-                ),
+                // onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                //   context,
+                //   RouteName.home,
+                //   (route) => false,
+                // ),
+                onPressed: () {
+                  HomeRoute().push(context);
+                },
                 icon: const Icon(Icons.arrow_back),
               ),
               title: const Text('PROFILE'),
@@ -395,8 +399,10 @@ class ProfileScreen extends StatelessWidget {
                 )
               : Icon(icon, size: 35, color: Colors.white),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 15,
+        ),
         title: Text(
           title,
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),

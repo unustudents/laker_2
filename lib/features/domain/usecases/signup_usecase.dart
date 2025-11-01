@@ -1,4 +1,5 @@
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../entities/signup_entity.dart';
@@ -9,21 +10,7 @@ class SignupUsecase {
 
   SignupUsecase(this._repository);
 
-  Future<Either<Failure, SignupEntity>> call({
-    required String email,
-    required String name,
-    required String division,
-    required DateTime birthDate,
-    required String whatsapp,
-    required String password,
-  }) async {
-    return await _repository.signup(
-      email: email,
-      name: name,
-      division: division,
-      birthDate: birthDate,
-      whatsapp: whatsapp,
-      password: password,
-    );
+  Future<Either<Failure, AuthResponse>> call(SignupEntity data) async {
+    return await _repository.signup(data);
   }
 }

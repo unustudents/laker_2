@@ -24,7 +24,8 @@ class ListQuisScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get category dari arguments navigasi
     final category =
-        ModalRoute.of(context)?.settings.arguments as String? ?? '';
+        (ModalRoute.of(context)?.settings.arguments as String?) ??
+        '';
 
     // VARIABLE: Get subcategory berdasarkan kategori
     late List<String> subcategories;

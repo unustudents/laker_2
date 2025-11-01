@@ -1,4 +1,4 @@
-package com.unustudents.laker_2
+package com.unustudents.laker2
 
 import io.flutter.embedding.android.FlutterActivity
 

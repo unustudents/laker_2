@@ -15,28 +15,29 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:laker_2/routes/app_router.dart';
 
-import '../../../routes/app_routes.dart';
 import '../cubit/pre_test_cubit.dart';
 
 class PreTestScreen extends StatelessWidget {
   const PreTestScreen({super.key});
+
   static const List<String> _option = ["A", "B", "C", "D"];
 
   @override
   Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
+    final args =
+        (ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?) ??
         {};
 
     return BlocBuilder<PreTestCubit, PreTestState>(
       builder: (context, state) {
         return Scaffold(
           appBar: _AppBarWidget(state: state),
-          body: _buildBody(context, state, arguments),
+          body: _buildBody(context, state, args),
           floatingActionButton: _FloatingActionButtonWidget(
             state: state,
-            arguments: arguments,
+            arguments: args,
           ),
         );
       },
@@ -108,11 +109,12 @@ class PreTestScreen extends StatelessWidget {
                                   TextButton(
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      Navigator.pushNamed(
-                                        context,
-                                        RouteName.result,
-                                        arguments: score,
-                                      );
+                                      // Navigator.pushNamed(
+                                      //   context,
+                                      //   ResultRoute().toString(),
+                                      //   arguments: score,
+                                      // );
+                                      ResultRoute().push(context);
                                     },
                                     child: const Text("Yakin"),
                                   ),
@@ -120,11 +122,12 @@ class PreTestScreen extends StatelessWidget {
                               ),
                             );
                           } else {
-                            Navigator.pushNamed(
-                              context,
-                              RouteName.materi,
-                              arguments: arguments['uid'],
-                            );
+                            // Navigator.pushNamed(
+                            //   context,
+                            //   RouteName.materi,
+                            //   arguments: arguments['uid'],
+                            // );
+                            MateriRoute().push(context);
                           }
                         },
                   child: Text(arguments['test'] != null ? "Selesai" : "Next"),

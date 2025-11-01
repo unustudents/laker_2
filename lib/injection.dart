@@ -1,39 +1,67 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
+import 'features/data/datasources/remote/signin_remote.dart';
+import 'features/data/datasources/remote/signup_remote.dart';
+import 'features/data/repositories/signin_repoimpl.dart';
+import 'features/data/repositories/signup_repoimpl.dart';
+import 'features/domain/repositories/signin_repository.dart'
+    show SigninRepository;
+import 'features/domain/repositories/signup_repository.dart';
+import 'features/domain/usecases/signin_usecase.dart' show SigninUsecase;
+import 'features/domain/usecases/signup_usecase.dart';
+import 'features/presentation/cubit/materi_cubit.dart';
+import 'features/presentation/cubit/post_test_cubit.dart';
+import 'features/presentation/cubit/pre_test_cubit.dart';
+import 'features/presentation/cubit/profile_cubit.dart';
 import 'features/presentation/cubit/signin_cubit.dart';
 import 'features/presentation/cubit/signup_cubit.dart';
 import 'features/presentation/cubit/splash_cubit.dart';
-import 'features/domain/usecases/signup_usecase.dart';
+import 'supabase_config.dart';
 
-var mainInjection = GetIt.instance;
+var dI = GetIt.instance;
 
-init() async {
-  // CUBIT
-  mainInjection.registerFactory(
-    () => SigninCubit(signinUsecase: mainInjection()),
-  );
+Future<void> init() async {
+  //  CUBITS
+  dI.registerFactory(() => SigninCubit(signinUsecase: dI<SigninUsecase>()));
 
-  mainInjection.registerFactory(
-    () => SignupCubit(signupUsecase: mainInjection()),
-  );
+  dI.registerFactory(() => SignupCubit(signupUsecase: dI<SignupUsecase>()));
 
-  mainInjection.registerFactory(() => SplashCubit());
+  dI.registerFactory(() => SplashCubit());
+
+  dI.registerFactory(() => ProfileCubit());
+
+  dI.registerFactory(() => PreTestCubit());
+
+  dI.registerFactory(() => PostTestCubit());
+
+  dI.registerFactory(() => MateriCubit());
 
   // USECASE
-  mainInjection.registerLazySingleton(() => SignupUsecase(mainInjection()));
+  dI.registerLazySingleton(() => SignupUsecase(dI<SignupRepository>()));
 
-  // // BLOC
-  // mainInjection.registerFactory(
-  //   () => AuthBloc(registerUseCase: mainInjection(), loginUseCase: mainInjection()),
-  // );
+  dI.registerLazySingleton(() => SigninUsecase(dI<SigninRepository>()));
 
-  // // USECASE
-  // mainInjection.registerLazySingleton(() => RegisterUseCase(mainInjection()));
-  // mainInjection.registerLazySingleton(() => LoginUseCase(mainInjection()));
+  // REPOSITORY
+  dI.registerLazySingleton<SigninRepository>(
+    () => SigninRepositoryImpl(remoteDataSource: dI<SigninRemoteDataSource>()),
+  );
 
-  // // REPOSITORY IMPLEMENTATION
-  // mainInjection.registerLazySingleton<AuthRepository>(() => AuthRepoImpl(authFirebase: mainInjection()));
+  dI.registerLazySingleton<SignupRepository>(
+    () => SignupRepositoryImpl(remoteDataSource: dI<SignupRemoteDataSource>()),
+  );
 
-  // // DATASOURCE
-  // mainInjection.registerLazySingleton<AuthFirebase>(() => FirebaseImplementasi());
+  // DATA SOURCE
+  dI.registerLazySingleton<SigninRemoteDataSource>(
+    () => SigninRemoteDataSourceImpl(supabaseClient: dI()),
+  );
+
+  dI.registerLazySingleton<SignupRemoteDataSource>(
+    () => SignupRemoteDataSourceImpl(client: dI()),
+  );
+
+  // FIREBASE AUTH
+  dI.registerLazySingleton(() => FirebaseAuth.instance);
+
+  dI.registerLazySingleton(() => Supabase.instance.client);
 }

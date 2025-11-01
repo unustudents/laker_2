@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:laker_2/gen/fonts.gen.dart';
 
 import '../core/constant/constants.dart';
 
@@ -17,7 +18,7 @@ class ThemeApp {
         fontSize: 20.0,
       ),
     ),
-    fontFamily: "Poppins",
+    fontFamily: FontFamily.poppins,
     brightness: Brightness.light,
     // elevatedButtonTheme: TElevatedButton.lightElevatedButtonTheme,
     primaryColor: AppColors.biruTua,

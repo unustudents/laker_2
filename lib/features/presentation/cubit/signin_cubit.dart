@@ -5,16 +5,6 @@ import '../../domain/usecases/signin_usecase.dart';
 
 part 'signin_state.dart';
 
-/// SigninCubit - Handles sign-in business logic and state management
-///
-/// This cubit manages the user authentication flow for sign-in operations.
-/// It uses the LoginUseCase from the domain layer to handle authentication.
-///
-/// States:
-/// - [SigninInitial]: Initial state when cubit is created
-/// - [SigninLoading]: Loading state during authentication
-/// - [SigninSuccess]: Successful authentication with user data
-/// - [SigninError]: Failed authentication with error message
 class SigninCubit extends Cubit<SigninState> {
   final SigninUsecase _signinUsecase;
 
@@ -22,13 +12,6 @@ class SigninCubit extends Cubit<SigninState> {
     : _signinUsecase = signinUsecase,
       super(SigninInitial());
 
-  /// Sign in with email and password
-  ///
-  /// Parameters:
-  /// - [email]: User email address
-  /// - [password]: User password
-  ///
-  /// Emits states: Loading -> Success/Error
   Future<void> signin({required String email, required String password}) async {
     // Validate inputs
     if (!_validateInputs(email, password)) {
@@ -43,10 +26,8 @@ class SigninCubit extends Cubit<SigninState> {
 
     // Handle result using fold pattern (Either)
     result.fold(
-      // On failure (left side)
       (failure) => emit(SigninError(failure.msg)),
-      // On success (right side)
-      (user) => emit(SigninSuccess(user.email, user.name)),
+      (user) => emit(const SigninSuccess()),
     );
   }
 
@@ -66,8 +47,8 @@ class SigninCubit extends Cubit<SigninState> {
     return emailRegex.hasMatch(email);
   }
 
-  /// Reset state to initial
-  void reset() {
-    emit(SigninInitial());
-  }
+  // /// Reset state to initial
+  // void reset() {
+  //   emit(SigninInitial());
+  // }
 }

@@ -315,24 +315,26 @@ import '../cubit/post_test_cubit.dart';
 
 class PostTestScreen extends StatelessWidget {
   const PostTestScreen({super.key});
+
   static const List<String> _option = ["A", "B", "C", "D"];
 
   @override
   Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)?.settings.arguments as String? ?? '';
+    final args =
+        (ModalRoute.of(context)?.settings.arguments as String?) ??
+        '';
 
     return BlocBuilder<PostTestCubit, PostTestState>(
       builder: (context, state) {
         // Initialize Cubit dengan uid dari arguments
         if (state is PostTestInitial) {
-          context.read<PostTestCubit>().initialize(arguments);
+          context.read<PostTestCubit>().initialize(args);
         }
 
         return Scaffold(
           appBar: _AppBarWidget(state: state),
           body: _buildBody(context, state),
-          floatingActionButton: _FloatingActionButtonWidget(uid: arguments),
+          floatingActionButton: _FloatingActionButtonWidget(uid: args),
         );
       },
     );

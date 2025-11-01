@@ -20,13 +20,7 @@ class SigninLoading extends SigninState {
 
 /// Successful sign-in state with user information
 class SigninSuccess extends SigninState {
-  final String email;
-  final String? name;
-
-  const SigninSuccess(this.email, this.name);
-
-  @override
-  List<Object> get props => [email, if (name != null) name!];
+  const SigninSuccess();
 }
 
 /// Error state when sign-in fails
