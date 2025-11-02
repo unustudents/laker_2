@@ -1,21 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:laker_2/routes/app_router.dart';
 
-// ============================================================================
-// KONVERSI KE FLUTTER MODERN (DARI GETX)
-// ============================================================================
-// Perubahan:
-// 1. GetView<HomeController> → StatelessWidget
-// 2. Get.width → MediaQuery.of(context).size.width
-// 3. Get.toNamed() → Navigator.pushNamed()
-// 4. Responsive sizing: .wp (width percentage) → MediaQuery calculation
-// 5. Constants dan Kategori tetap sama
-// 6. Semua part widgets → integrated dalam file ini
-// ============================================================================
-
-// TODO: Import constants dan Kategori
-// import '../../../domain/constant/constants.dart';
-// import '../../../routes/app_routes.dart';
+import '../../../core/constant/constants.dart';
+import '../../../gen/assets.gen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -27,7 +15,7 @@ class HomeScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     // Helper functions untuk responsive sizing (.wp extension replacement)
-    final wpValue = (percent) => screenWidth * (percent / 100);
+    double wpValue(percent) => screenWidth * (percent / 100);
 
     return Scaffold(
       body: Center(
@@ -47,36 +35,22 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // TODO: Uncomment saat AppTexts constant ready
-                    // Image.asset(
-                    //   AppTexts.logo,
-                    //   fit: BoxFit.cover,
-                    //   width: screenWidth / 3,
-                    // ),
+                    Aset.images.logoPng.image(
+                      fit: BoxFit.cover,
+                      width: screenWidth / 3,
+                    ),
                     SizedBox(width: screenWidth / 3),
                     InkWell(
                       onTap: () {
                         // TODO: Navigate ke Profile dengan route name
-                        // Navigator.pushNamed(context, RouteName.profile);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Navigate to Profile'),
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
+                        ProfileRoute().go(context);
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: SizedBox(
                           width: wpValue(10.0),
                           // TODO: Uncomment saat AppTexts constant ready
-                          // child: Image.asset(
-                          //   AppTexts.iconProfil,
-                          //   fit: BoxFit.cover,
-                          // ),
-                          child: Container(
-                            color: Colors.grey,
-                            child: const Icon(Icons.account_circle),
-                          ),
+                          child: Aset.images.profile.image(),
                         ),
                       ),
                     ),
@@ -217,9 +191,7 @@ class HomeProfilePMII extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Uncomment saat Kategori constant ready
-    // const profileItems = Kategori.optionProfil;
-    const profileItems = <Map<String, String>>[];
+    final profileItems = Kategori.optionProfil;
 
     return SingleChildScrollView(
       padding: EdgeInsets.zero,
@@ -233,13 +205,12 @@ class HomeProfilePMII extends StatelessWidget {
               child: Card(
                 child: Container(
                   decoration: BoxDecoration(
-                    // TODO: Uncomment saat AppTexts constant ready
-                    // image: DecorationImage(
-                    //   opacity: 0.2,
-                    //   fit: BoxFit.cover,
-                    //   image: AssetImage(AppTexts.background),
-                    //   scale: 0.2,
-                    // ),
+                    image: DecorationImage(
+                      opacity: 0.2,
+                      fit: BoxFit.cover,
+                      image: Aset.images.background.provider(),
+                      scale: 0.2,
+                    ),
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(
@@ -258,9 +229,7 @@ class HomeProfilePMII extends StatelessWidget {
                       ),
                     ),
                     subtitle: Text('${e["subtitle"]}'),
-                    // TODO: Uncomment saat AppTexts constant ready
-                    // leading: Image.asset(AppTexts.logoPMII),
-                    leading: const Icon(Icons.business),
+                    leading: Aset.images.logoPmii.image(),
                   ),
                 ),
               ),
@@ -279,29 +248,14 @@ class HomeKategoriKuis extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Uncomment saat Kategori constant ready
-    // const kategoriItems = Kategori.optionKategori;
-    const kategoriItems = <Map<String, String>>[];
+    final kategoriItems = Kategori.optionKategori;
 
     return Expanded(
       child: ListView.separated(
         itemBuilder: (context, index) {
           final item = kategoriItems[index];
           return InkWell(
-            onTap: () {
-              // TODO: Navigate ke List Quiz dengan category
-              // Navigator.pushNamed(
-              //   context,
-              //   RouteName.listQuiz,
-              //   arguments: item["title"],
-              // );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Navigate to: ${item["title"]}'),
-                  duration: const Duration(seconds: 1),
-                ),
-              );
-            },
+            onTap: () => ListquizRoute(item["title"] ?? '').go(context),
             child: Card(
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(

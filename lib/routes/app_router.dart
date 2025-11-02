@@ -2,10 +2,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/domain/usecases/pretest_usecase.dart';
 import '../features/presentation/cubit/materi_cubit.dart';
 import '../features/presentation/cubit/post_test_cubit.dart';
 import '../features/presentation/cubit/pre_test_cubit.dart';
 import '../features/presentation/cubit/profile_cubit.dart';
+import '../features/domain/usecases/pretest_usecase.dart' show PretestUseCase;
 import '../features/presentation/cubit/signin_cubit.dart';
 import '../features/presentation/cubit/signup_cubit.dart';
 import '../features/presentation/cubit/splash_cubit.dart';
@@ -92,12 +94,17 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 
 /// PRETEST SCREEN - Nested under Home
 class PretestRoute extends GoRouteData with $PretestRoute {
-  const PretestRoute();
+  final int idKategori;
+
+  const PretestRoute({this.idKategori = 1});
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider(
-      create: (context) => dI<PreTestCubit>(),
+      create: (context) => PreTestCubit(
+        readSoalUseCase: dI<PretestUseCase>(),
+        idKategori: idKategori,
+      ),
       child: const PreTestScreen(),
     );
   }
@@ -131,11 +138,11 @@ class MateriRoute extends GoRouteData with $MateriRoute {
 
 /// LIST QUIZ SCREEN - Nested under Home
 class ListquizRoute extends GoRouteData with $ListquizRoute {
-  const ListquizRoute();
-
+  final String category;
+  const ListquizRoute(this.category);
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const ListQuisScreen();
+    return ListQuisScreen(category: category);
   }
 }
 

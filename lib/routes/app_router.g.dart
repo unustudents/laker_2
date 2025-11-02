@@ -124,10 +124,25 @@ mixin $HomeRoute on GoRouteData {
 }
 
 mixin $PretestRoute on GoRouteData {
-  static PretestRoute _fromState(GoRouterState state) => const PretestRoute();
+  static PretestRoute _fromState(GoRouterState state) => PretestRoute(
+    idKategori:
+        _$convertMapValue(
+          'id-kategori',
+          state.uri.queryParameters,
+          int.parse,
+        ) ??
+        1,
+  );
+
+  PretestRoute get _self => this as PretestRoute;
 
   @override
-  String get location => GoRouteData.$location('/home/pretest');
+  String get location => GoRouteData.$location(
+    '/home/pretest',
+    queryParams: {
+      if (_self.idKategori != 1) 'id-kategori': _self.idKategori.toString(),
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -184,10 +199,16 @@ mixin $MateriRoute on GoRouteData {
 }
 
 mixin $ListquizRoute on GoRouteData {
-  static ListquizRoute _fromState(GoRouterState state) => const ListquizRoute();
+  static ListquizRoute _fromState(GoRouterState state) =>
+      ListquizRoute(state.uri.queryParameters['category']!);
+
+  ListquizRoute get _self => this as ListquizRoute;
 
   @override
-  String get location => GoRouteData.$location('/home/listquiz');
+  String get location => GoRouteData.$location(
+    '/home/listquiz',
+    queryParams: {'category': _self.category},
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

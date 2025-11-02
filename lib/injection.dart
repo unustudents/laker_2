@@ -1,13 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
+import 'features/data/datasources/remote/pretest_remote.dart';
 import 'features/data/datasources/remote/signin_remote.dart';
 import 'features/data/datasources/remote/signup_remote.dart';
+import 'features/data/repositories/pretest_repoimpl.dart';
 import 'features/data/repositories/signin_repoimpl.dart';
 import 'features/data/repositories/signup_repoimpl.dart';
+import 'features/domain/repositories/pretest_repository.dart';
 import 'features/domain/repositories/signin_repository.dart'
     show SigninRepository;
 import 'features/domain/repositories/signup_repository.dart';
+import 'features/domain/usecases/pretest_usecase.dart' show PretestUseCase;
 import 'features/domain/usecases/signin_usecase.dart' show SigninUsecase;
 import 'features/domain/usecases/signup_usecase.dart';
 import 'features/presentation/cubit/materi_cubit.dart';
@@ -31,7 +35,12 @@ Future<void> init() async {
 
   dI.registerFactory(() => ProfileCubit());
 
-  dI.registerFactory(() => PreTestCubit());
+  dI.registerFactoryParam<PreTestCubit, int, dynamic>(
+    (idKategori, _) => PreTestCubit(
+      readSoalUseCase: dI<PretestUseCase>(),
+      idKategori: idKategori,
+    ),
+  );
 
   dI.registerFactory(() => PostTestCubit());
 
@@ -42,6 +51,8 @@ Future<void> init() async {
 
   dI.registerLazySingleton(() => SigninUsecase(dI<SigninRepository>()));
 
+  dI.registerLazySingleton(() => PretestUseCase(dI<PretestRepository>()));
+
   // REPOSITORY
   dI.registerLazySingleton<SigninRepository>(
     () => SigninRepositoryImpl(remoteDataSource: dI<SigninRemoteDataSource>()),
@@ -51,6 +62,11 @@ Future<void> init() async {
     () => SignupRepositoryImpl(remoteDataSource: dI<SignupRemoteDataSource>()),
   );
 
+  dI.registerLazySingleton<PretestRepository>(
+    () =>
+        PretestRepositoryImpl(remoteDataSource: dI<PretestRemoteDataSource>()),
+  );
+
   // DATA SOURCE
   dI.registerLazySingleton<SigninRemoteDataSource>(
     () => SigninRemoteDataSourceImpl(supabaseClient: dI()),
@@ -58,6 +74,10 @@ Future<void> init() async {
 
   dI.registerLazySingleton<SignupRemoteDataSource>(
     () => SignupRemoteDataSourceImpl(client: dI()),
+  );
+
+  dI.registerLazySingleton<PretestRemoteDataSource>(
+    () => PretestRemoteDataSourceImpl(supabaseClient: dI()),
   );
 
   // FIREBASE AUTH

@@ -1,10 +1,9 @@
-class DbStructure {
+class Db {
   // Table Names
   static const String luTable = 'l_users';
-  static const String puaTable = 'p_user_answer';
-  static const String pqTable = 'p_quis';
-  static const String pqcTable = 'p_quis_category';
-  static const String pqoTable = 'p_quis_options';
+  static const String lpTable = 'l_pretest';
+  static const String lpoTable = 'l_pretes_option';
+  static const String lkTable = 'l_kategori';
 
   // Users Table Columns
   static const String luId = 'id';
@@ -14,6 +13,21 @@ class DbStructure {
   static const String luTempLahir = 'temp_lahir';
   static const String luDivisi = 'divisi';
   static const String luWa = 'wa';
+
+  static const String lpId = 'id';
+  static const String lpSoal = 'soal';
+  static const String lpKategori = 'kategori';
+
+  static const String lpoId = 'id';
+  static const String lpoIdPretest = 'id_pretest';
+  static const String lpoPilihan = 'pilihan';
+  static const String lpoLabel = 'label';
+  static const String lpoIsCorrect = 'is_correct';
+
+  static const String lkNama = 'nama';
+  static const String lkKategori = 'kategori';
+
+  //
 
   // User Answer Table Columns
   static const String puaId = 'id';

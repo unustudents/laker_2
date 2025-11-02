@@ -24,12 +24,12 @@ class SignupRemoteDataSourceImpl implements SignupRemoteDataSource {
     );
     final userId = response.user?.id;
     if (userId != null) {
-      await _supabaseClient.from(DbStructure.luTable).insert({
-        DbStructure.luName: model.name,
-        DbStructure.luEmail: model.email,
-        DbStructure.luDivisi: model.divisi,
-        DbStructure.luTempLahir: model.tempLahir,
-        DbStructure.luWa: model.wa,
+      await _supabaseClient.from(Db.luTable).insert({
+        Db.luName: model.name,
+        Db.luEmail: model.email,
+        Db.luDivisi: model.divisi,
+        Db.luTempLahir: model.tempLahir,
+        Db.luWa: model.wa,
       });
     }
     return response;

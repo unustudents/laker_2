@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:laker_2/routes/app_router.dart';
+
+import '../../../core/constant/constants.dart';
 
 // ============================================================================
 // KONVERSI KE FLUTTER MODERN (DARI GETX)
@@ -18,34 +21,25 @@ import 'package:flutter/material.dart';
 // import '../../../routes/app_routes.dart';
 
 class ListQuisScreen extends StatelessWidget {
-  const ListQuisScreen({super.key});
+  final String category;
+
+  const ListQuisScreen({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) {
-    // Get category dari arguments navigasi
-    final category =
-        (ModalRoute.of(context)?.settings.arguments as String?) ??
-        '';
-
     // VARIABLE: Get subcategory berdasarkan kategori
-    late List<String> subcategories;
+    late List<Map<String, dynamic>> subcategories;
     bool isValidCategory = true;
 
     switch (category) {
       case "MAPABA":
-        // TODO: Uncomment saat Kategori constant ready
-        // subcategories = Kategori.subcategoryMapaba;
-        subcategories = []; // Placeholder
+        subcategories = Kategori.subcategoryMapaba;
         break;
       case "PKD":
-        // TODO: Uncomment saat Kategori constant ready
-        // subcategories = Kategori.subcategoryPKD;
-        subcategories = []; // Placeholder
+        subcategories = Kategori.subcategoryPKD;
         break;
       case "PKL":
-        // TODO: Uncomment saat Kategori constant ready
-        // subcategories = Kategori.subcategoryPKL;
-        subcategories = []; // Placeholder
+        subcategories = Kategori.subcategoryPKL;
         break;
       default:
         isValidCategory = false;
@@ -71,20 +65,10 @@ class ListQuisScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListQuisCard(
             nomor: "${index + 1}",
-            title: subcategories[index],
+            title: subcategories[index]['title'] as String,
             onTap: () {
-              // TODO: Uncomment dan set route name yang sesuai
-              // Navigator.pushNamed(
-              //   context,
-              //   RouteName.pretest,
-              //   arguments: subcategories[index],
-              // );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Navigate ke: ${subcategories[index]}'),
-                  duration: const Duration(seconds: 1),
-                ),
-              );
+              final idKategori = subcategories[index]['id'] as int;
+              PretestRoute(idKategori: idKategori).go(context);
             },
           );
         },
