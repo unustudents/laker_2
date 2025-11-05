@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:laker_2/features/presentation/cubit/home_cubit.dart';
 
 import '../features/domain/usecases/pretest_usecase.dart';
 import '../features/presentation/cubit/materi_cubit.dart';
@@ -88,7 +89,10 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const HomeScreen();
+    return BlocProvider(
+      create: (context) => dI<HomeCubit>(),
+      child: const HomeScreen(),
+    );
   }
 }
 
@@ -103,6 +107,7 @@ class PretestRoute extends GoRouteData with $PretestRoute {
     return BlocProvider(
       create: (context) => PreTestCubit(
         readSoalUseCase: dI<PretestUseCase>(),
+        submitAnswerUseCase: dI<SubmitAnswerUsecase>(),
         idKategori: idKategori,
       ),
       child: const PreTestScreen(),

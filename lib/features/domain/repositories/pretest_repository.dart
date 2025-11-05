@@ -7,4 +7,7 @@ abstract class PretestRepository {
   Future<Either<Failure, List<PretestEntity>>> readSoal({
     required int idKategori,
   });
+  Future<Either<Failure, UserAnswerEntity>> submitJawabanPretest({
+    required PretestOptionEntity data,
+  });
 }

@@ -64,6 +64,16 @@ class PretestOptionModel extends Equatable {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'id_pretest': idPretest,
+      'pilihan': pilihan,
+      'is_correct': isCorrect,
+      'label': label,
+    };
+  }
+
   factory PretestOptionModel.fromEntity(PretestOptionEntity entity) {
     return PretestOptionModel(
       id: entity.id,
@@ -86,4 +96,64 @@ class PretestOptionModel extends Equatable {
 
   @override
   List<Object?> get props => [id, idPretest, pilihan, isCorrect, label];
+}
+
+class UserAnswerModel extends Equatable {
+  // final String? id;
+  final String idUser;
+  final int idPretest;
+  final String option;
+  final bool isCorrect;
+
+  const UserAnswerModel({
+    // this.id,
+    required this.idUser,
+    required this.idPretest,
+    required this.option,
+    required this.isCorrect,
+  });
+
+  factory UserAnswerModel.fromJson(Map<String, dynamic> json) {
+    return UserAnswerModel(
+      // id: json['id'] as String?,
+      idUser: json['id_user'] as String? ?? '',
+      idPretest: json['id_pretest'] as int? ?? 0,
+      option: json['option'] as String? ?? '',
+      isCorrect: json['is_correct'] as bool? ?? false,
+    );
+  }
+
+  // TODO: Aktifkan jika perlu
+  // Map<String, dynamic> toJson() {
+  //   return {
+  //     'id': id,
+  //     'id_user': idUser,
+  //     'id_pretest': idPretest,
+  //     'option': option,
+  //     'is_correct': isCorrect,
+  //   };
+  // }
+
+  factory UserAnswerModel.fromEntity(UserAnswerEntity entity) {
+    return UserAnswerModel(
+      // id: entity.id,
+      idUser: entity.idUser,
+      idPretest: entity.idPretest,
+      option: entity.option,
+      isCorrect: entity.isCorrect,
+    );
+  }
+
+  UserAnswerEntity toEntity() {
+    return UserAnswerEntity(
+      // id: id,
+      idUser: idUser,
+      idPretest: idPretest,
+      option: option,
+      isCorrect: isCorrect,
+    );
+  }
+
+  @override
+  List<Object?> get props => [idUser, idPretest, option, isCorrect];
 }

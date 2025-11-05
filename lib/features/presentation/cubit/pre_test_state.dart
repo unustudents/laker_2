@@ -17,8 +17,14 @@ class PreTestLoading extends PreTestState {
 
 class PreTestLoaded extends PreTestState {
   final List<PretestEntity> soals;
+  final int currentIndex;
+  final Map<int, String> userAnswers;
 
-  const PreTestLoaded({required this.soals});
+  const PreTestLoaded({
+    required this.soals,
+    required this.currentIndex,
+    required this.userAnswers,
+  });
 
   @override
   List<Object?> get props => [soals];
@@ -32,3 +38,5 @@ class PreTestError extends PreTestState {
   @override
   List<Object> get props => [message];
 }
+
+class PreTestSubmit extends PreTestState {}

@@ -1,38 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:laker_2/routes/app_router.dart';
 
 import '../cubit/pre_test_cubit.dart';
 
-class PreTestScreen extends StatefulWidget {
+class PreTestScreen extends HookWidget {
   const PreTestScreen({super.key});
 
   @override
-  State<PreTestScreen> createState() => _PreTestScreenState();
-}
-
-class _PreTestScreenState extends State<PreTestScreen> {
-  static const List<String> _optionLabels = ["A", "B", "C", "D"];
-  final Map<int, String?> _selectedAnswers = {};
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // State lokal menggunakan Flutter Hooks
+    final selectedAnswers = useState<Map<int, String?>>({});
+    final currentIndex = useState(0);
+
     return BlocBuilder<PreTestCubit, PreTestState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: _buildAppBar(context, state),
-          body: _buildBody(context, state),
+          appBar: _buildAppBar(context, state, currentIndex.value),
+          body: _buildBody(context, state, currentIndex, selectedAnswers),
         );
       },
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, PreTestState state) {
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    PreTestState state,
+    int currentIndex,
+  ) {
     int total = 0;
     if (state is PreTestLoaded) {
       total = state.soals.length;
@@ -43,7 +39,7 @@ class _PreTestScreenState extends State<PreTestScreen> {
       foregroundColor: Theme.of(context).primaryColor,
       centerTitle: true,
       title: Text(
-        "Question ${_currentIndex + 1} / $total",
+        "Question ${currentIndex + 1} / $total",
         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
           color: Theme.of(context).primaryColor,
           fontWeight: FontWeight.w500,
@@ -56,7 +52,12 @@ class _PreTestScreenState extends State<PreTestScreen> {
     );
   }
 
-  Widget _buildBody(BuildContext context, PreTestState state) {
+  Widget _buildBody(
+    BuildContext context,
+    PreTestState state,
+    ValueNotifier<int> currentIndex,
+    ValueNotifier<Map<int, String?>> selectedAnswers,
+  ) {
     if (state is PreTestLoading) {
       return Center(
         child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
@@ -96,115 +97,128 @@ class _PreTestScreenState extends State<PreTestScreen> {
       );
     }
 
-    final soal = state.soals[_currentIndex];
+    final soal = state.soals[currentIndex.value];
     final options = [...soal.options];
-    // options.shuffle();
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    soal.soal,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.w600,
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      soal.soal,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  ...options.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final option = entry.value;
-                    final isSelected =
-                        _selectedAnswers[_currentIndex] == option.pilihan;
+                    const SizedBox(height: 24),
+                    ...options.asMap().entries.map((entry) {
+                      final option = entry.value;
+                      final isSelected =
+                          selectedAnswers.value[currentIndex.value] ==
+                          option.pilihan;
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedAnswers[_currentIndex] = option.pilihan;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border.all(
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: GestureDetector(
+                          onTap: () {
+                            selectedAnswers.value = {
+                              ...selectedAnswers.value,
+                              currentIndex.value: option.pilihan,
+                            };
+                            context.read<PreTestCubit>().submitJawabanPretest(
+                              data: option,
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: isSelected
+                                    ? Theme.of(context).primaryColor
+                                    : Colors.grey.shade300,
+                                width: isSelected ? 2 : 1,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
                               color: isSelected
-                                  ? Theme.of(context).primaryColor
-                                  : Colors.grey.shade300,
-                              width: isSelected ? 2 : 1,
+                                  ? Theme.of(
+                                      context,
+                                    ).primaryColor.withValues(alpha: 0.1)
+                                  : Colors.transparent,
                             ),
-                            borderRadius: BorderRadius.circular(8),
-                            color: isSelected
-                                ? Theme.of(
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor: Theme.of(
                                     context,
-                                  ).primaryColor.withOpacity(0.1)
-                                : Colors.transparent,
-                          ),
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 18,
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: Text(
-                                  _optionLabels[index],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
+                                  ).primaryColor,
+                                  child: Text(
+                                    option.label,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  option.pilihan,
-                                  style: const TextStyle(fontSize: 14),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    option.pilihan,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                onPressed: _currentIndex > 0
-                    ? () {
-                        setState(() => _currentIndex--);
-                      }
-                    : null,
-                child: const Text("Previous"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_currentIndex < state.soals.length - 1) {
-                    setState(() => _currentIndex++);
-                  } else {
-                    _showFinishDialog(context);
-                  }
-                },
-                child: Text(
-                  _currentIndex == state.soals.length - 1 ? "Finish" : "Next",
+                      );
+                    }),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(height: 24),
+            Row(
+              spacing: 12,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (currentIndex.value > 0)
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        currentIndex.value--;
+                      },
+                      child: const Text("Previous"),
+                    ),
+                  ),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (currentIndex.value < state.soals.length - 1) {
+                        currentIndex.value++;
+                      } else {
+                        _showFinishDialog(context);
+                      }
+                    },
+                    child: Text(
+                      currentIndex.value == state.soals.length - 1
+                          ? "Finish"
+                          : "Next",
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -223,15 +237,7 @@ class _PreTestScreenState extends State<PreTestScreen> {
             child: const Text("Batal"),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Kuis telah diselesaikan!"),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
+            onPressed: () => HomeRoute().go(context),
             child: const Text("Yakin"),
           ),
         ],

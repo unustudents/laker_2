@@ -15,3 +15,15 @@ class PretestUseCase {
     return await repository.readSoal(idKategori: idKategori);
   }
 }
+
+class SubmitAnswerUsecase {
+  final PretestRepository repository;
+
+  SubmitAnswerUsecase(this.repository);
+
+  Future<Either<Failure, UserAnswerEntity>> call({
+    required PretestOptionEntity data,
+  }) async {
+    return await repository.submitJawabanPretest(data: data);
+  }
+}

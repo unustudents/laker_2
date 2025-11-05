@@ -35,3 +35,22 @@ class PretestOptionEntity extends Equatable {
   @override
   List<Object?> get props => [id, idPretest, pilihan, isCorrect, label];
 }
+
+class UserAnswerEntity extends Equatable {
+  final String? id;
+  final String idUser;
+  final int idPretest;
+  final String option;
+  final bool isCorrect;
+
+  const UserAnswerEntity({
+    this.id,
+    required this.idUser,
+    required this.idPretest,
+    required this.option,
+    required this.isCorrect,
+  });
+
+  @override
+  List<Object?> get props => [id, idUser, idPretest, option, isCorrect];
+}

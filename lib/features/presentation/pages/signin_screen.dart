@@ -123,14 +123,6 @@ class SignInScreen extends HookWidget {
     final isPasswordVisible = useState(false);
     final formKey = useMemoized(() => GlobalKey<FormState>());
 
-    // Cleanup controllers saat widget di-dispose
-    useEffect(() {
-      return () {
-        email.dispose();
-        password.dispose();
-      };
-    }, []);
-
     return Scaffold(
       body: Form(
         key: formKey,

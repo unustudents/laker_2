@@ -1,19 +1,25 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
+import 'features/data/datasources/remote/home_remote.dart';
 import 'features/data/datasources/remote/pretest_remote.dart';
 import 'features/data/datasources/remote/signin_remote.dart';
 import 'features/data/datasources/remote/signup_remote.dart';
+import 'features/data/repositories/home_repoimpl.dart';
 import 'features/data/repositories/pretest_repoimpl.dart';
 import 'features/data/repositories/signin_repoimpl.dart';
 import 'features/data/repositories/signup_repoimpl.dart';
+import 'features/domain/repositories/home_repository.dart';
 import 'features/domain/repositories/pretest_repository.dart';
 import 'features/domain/repositories/signin_repository.dart'
     show SigninRepository;
 import 'features/domain/repositories/signup_repository.dart';
-import 'features/domain/usecases/pretest_usecase.dart' show PretestUseCase;
+import 'features/domain/usecases/home_usecase.dart';
+import 'features/domain/usecases/pretest_usecase.dart'
+    show PretestUseCase, SubmitAnswerUsecase;
 import 'features/domain/usecases/signin_usecase.dart' show SigninUsecase;
 import 'features/domain/usecases/signup_usecase.dart';
+import 'features/presentation/cubit/home_cubit.dart';
 import 'features/presentation/cubit/materi_cubit.dart';
 import 'features/presentation/cubit/post_test_cubit.dart';
 import 'features/presentation/cubit/pre_test_cubit.dart';
@@ -38,6 +44,7 @@ Future<void> init() async {
   dI.registerFactoryParam<PreTestCubit, int, dynamic>(
     (idKategori, _) => PreTestCubit(
       readSoalUseCase: dI<PretestUseCase>(),
+      submitAnswerUseCase: dI<SubmitAnswerUsecase>(),
       idKategori: idKategori,
     ),
   );
@@ -46,12 +53,18 @@ Future<void> init() async {
 
   dI.registerFactory(() => MateriCubit());
 
+  dI.registerFactory(() => HomeCubit(homeUsecase: dI<HomeUsecase>()));
+
   // USECASE
   dI.registerLazySingleton(() => SignupUsecase(dI<SignupRepository>()));
 
   dI.registerLazySingleton(() => SigninUsecase(dI<SigninRepository>()));
 
   dI.registerLazySingleton(() => PretestUseCase(dI<PretestRepository>()));
+
+  dI.registerLazySingleton(() => SubmitAnswerUsecase(dI<PretestRepository>()));
+
+  dI.registerLazySingleton(() => HomeUsecase(dI<HomeRepository>()));
 
   // REPOSITORY
   dI.registerLazySingleton<SigninRepository>(
@@ -67,6 +80,10 @@ Future<void> init() async {
         PretestRepositoryImpl(remoteDataSource: dI<PretestRemoteDataSource>()),
   );
 
+  dI.registerLazySingleton<HomeRepository>(
+    () => HomeRepositoryImpl(remoteDataSource: dI<HomeRemoteDataSource>()),
+  );
+
   // DATA SOURCE
   dI.registerLazySingleton<SigninRemoteDataSource>(
     () => SigninRemoteDataSourceImpl(supabaseClient: dI()),
@@ -78,6 +95,10 @@ Future<void> init() async {
 
   dI.registerLazySingleton<PretestRemoteDataSource>(
     () => PretestRemoteDataSourceImpl(supabaseClient: dI()),
+  );
+
+  dI.registerLazySingleton<HomeRemoteDataSource>(
+    () => HomeRemoteDataSourceImpl(supabase: dI()),
   );
 
   // FIREBASE AUTH

@@ -128,18 +128,6 @@ class SignUpScreen extends HookWidget {
     final password = useTextEditingController();
     final isPasswordVisible = useState(false);
 
-    // Cleanup controllers saat widget di-dispose
-    useEffect(() {
-      return () {
-        name.dispose();
-        tempatLahir.dispose();
-        divisi.dispose();
-        whatsapp.dispose();
-        email.dispose();
-        password.dispose();
-      };
-    }, []);
-
     return Scaffold(
       body: Center(
         child: Form(

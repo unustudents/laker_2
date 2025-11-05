@@ -4,6 +4,7 @@ class Db {
   static const String lpTable = 'l_pretest';
   static const String lpoTable = 'l_pretes_option';
   static const String lkTable = 'l_kategori';
+  static const String luaTable = 'l_user_answer';
 
   // Users Table Columns
   static const String luId = 'id';
@@ -26,6 +27,12 @@ class Db {
 
   static const String lkNama = 'nama';
   static const String lkKategori = 'kategori';
+
+  static const String luaId = 'id';
+  static const String luaUserId = 'id_user';
+  static const String luaIdPretest = 'id_pretest';
+  static const String luaOption = 'option';
+  static const String luaIsCorrect = 'is_correct';
 
   //
 

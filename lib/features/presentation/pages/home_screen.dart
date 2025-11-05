@@ -1,9 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:laker_2/routes/app_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constant/constants.dart';
 import '../../../gen/assets.gen.dart';
+import '../../../routes/app_router.dart';
+import '../../domain/entities/home_entity.dart';
+import '../cubit/home_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -11,7 +13,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get current Firebase user
-    User? auth = FirebaseAuth.instance.currentUser;
     final screenWidth = MediaQuery.of(context).size.width;
 
     // Helper functions untuk responsive sizing (.wp extension replacement)
@@ -34,22 +35,17 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // TODO: Uncomment saat AppTexts constant ready
                     Aset.images.logoPng.image(
                       fit: BoxFit.cover,
                       width: screenWidth / 3,
                     ),
                     SizedBox(width: screenWidth / 3),
                     InkWell(
-                      onTap: () {
-                        // TODO: Navigate ke Profile dengan route name
-                        ProfileRoute().go(context);
-                      },
+                      onTap: () => const ProfileRoute().go(context),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: SizedBox(
                           width: wpValue(10.0),
-                          // TODO: Uncomment saat AppTexts constant ready
                           child: Aset.images.profile.image(),
                         ),
                       ),
@@ -70,59 +66,68 @@ class HomeScreen extends StatelessWidget {
                         // fontSize: 16.0.sp,
                       ),
                     ),
-                    Text(
-                      "${auth?.displayName ?? 'User'} !",
-                      // TODO: Uncomment saat styleBold16 ready
-                      // style: styleBold16(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                    BlocSelector<HomeCubit, HomeState, HomeLoaded>(
+                      selector: (state) {
+                        return state.props.isNotEmpty && state is HomeLoaded
+                            ? state
+                            : HomeLoaded(home: HomeEntity(nama: 'User'));
+                      },
+                      builder: (context, state) {
+                        return Text(
+                          "${state.home.nama} !",
+                          // TODO: Uncomment saat styleBold16 ready
+                          // style: styleBold16(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
                 const SizedBox(height: 18),
 
                 // HERO SECTION: Sertifikat & Kuis Stats
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        blurRadius: 4,
-                        offset: const Offset(2, 2),
-                      ),
-                    ],
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: wpValue(4.0)),
-                  child: const IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        HomeHero(title: 'Sertifikat', score: '20'),
-                        VerticalDivider(thickness: 2),
-                        HomeHero(title: 'Kuis', score: '15'),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 28),
+                // Container(
+                //   decoration: BoxDecoration(
+                //     color: Colors.white,
+                //     borderRadius: BorderRadius.circular(10),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.grey.withOpacity(0.5),
+                //         blurRadius: 4,
+                //         offset: const Offset(2, 2),
+                //       ),
+                //     ],
+                //   ),
+                //   padding: EdgeInsets.symmetric(vertical: wpValue(4.0)),
+                //   child: const IntrinsicHeight(
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //       children: [
+                //         HomeHero(title: 'Sertifikat', score: '20'),
+                //         VerticalDivider(thickness: 2),
+                //         HomeHero(title: 'Kuis', score: '15'),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(height: 28),
 
                 // PROFIL PMII SECTION
-                Text(
-                  'Profil PMII',
-                  // TODO: Uncomment saat styleBold20 ready
-                  // style: styleBold20(),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const HomeProfilePMII(),
-                const SizedBox(height: 28),
+                // Text(
+                //   'Profil PMII',
+                //   // TODO: Uncomment saat styleBold20 ready
+                //   // style: styleBold20(),
+                //   style: const TextStyle(
+                //     fontSize: 20,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
+                // const SizedBox(height: 16),
+                // const HomeProfilePMII(),
+                // const SizedBox(height: 28),
 
                 // KATEGORI KUIS SECTION
                 Text(
