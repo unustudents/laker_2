@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 part 'profile_state.dart';
 
@@ -17,11 +16,9 @@ part 'profile_state.dart';
 /// - [ProfileSignoutSuccess]: Signout berhasil, ready untuk navigate ke login
 /// - [ProfileError]: Error ketika fetch data atau signout
 class ProfileCubit extends Cubit<ProfileState> {
-  final FirebaseAuth _firebaseAuth;
+  // final FirebaseAuth _firebaseAuth;
 
-  ProfileCubit({FirebaseAuth? firebaseAuth})
-    : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-      super(ProfileInitial()) {
+  ProfileCubit() : super(ProfileInitial()) {
     // Load user profile saat cubit dibuat
     loadUserProfile();
   }
@@ -31,27 +28,27 @@ class ProfileCubit extends Cubit<ProfileState> {
   /// Mengambil data user dari FirebaseAuth.instance.currentUser
   /// Emit ProfileLoaded jika berhasil, ProfileError jika gagal
   Future<void> loadUserProfile() async {
-    try {
-      emit(ProfileLoading());
+    // try {
+    //   emit(ProfileLoading());
 
-      final user = _firebaseAuth.currentUser;
+    //   final user = _firebaseAuth.currentUser;
 
-      if (user != null) {
-        // Buat map dengan user data
-        final userData = {
-          'uid': user.uid,
-          'nama': user.displayName ?? 'Unknown User',
-          'email': user.email ?? 'No email',
-          'photoUrl': user.photoURL,
-        };
+    //   if (user != null) {
+    //     // Buat map dengan user data
+    //     final userData = {
+    //       'uid': user.uid,
+    //       'nama': user.displayName ?? 'Unknown User',
+    //       'email': user.email ?? 'No email',
+    //       'photoUrl': user.photoURL,
+    //     };
 
-        emit(ProfileLoaded(userData));
-      } else {
-        emit(const ProfileError('User tidak ditemukan'));
-      }
-    } catch (e) {
-      emit(ProfileError('Error loading profile: $e'));
-    }
+    //     emit(ProfileLoaded(userData));
+    //   } else {
+    //     emit(const ProfileError('User tidak ditemukan'));
+    //   }
+    // } catch (e) {
+    //   emit(ProfileError('Error loading profile: $e'));
+    // }
   }
 
   /// Sign out user dari Firebase
@@ -60,17 +57,17 @@ class ProfileCubit extends Cubit<ProfileState> {
   /// Emit ProfileSignoutSuccess jika berhasil
   /// Emit ProfileError jika gagal
   Future<void> signout() async {
-    try {
-      emit(ProfileSigningOut());
+    // try {
+    //   emit(ProfileSigningOut());
 
-      // Sign out dari Firebase
-      await _firebaseAuth.signOut();
+    //   // Sign out dari Firebase
+    //   await _firebaseAuth.signOut();
 
-      // Emit success state
-      emit(ProfileSignoutSuccess());
-    } catch (e) {
-      emit(ProfileError('Error signing out: $e'));
-    }
+    //   // Emit success state
+    //   emit(ProfileSignoutSuccess());
+    // } catch (e) {
+    //   emit(ProfileError('Error signing out: $e'));
+    // }
   }
 
   /// Update user display name
@@ -78,23 +75,23 @@ class ProfileCubit extends Cubit<ProfileState> {
   /// Parameters:
   /// - [displayName]: Nama baru untuk user
   Future<void> updateDisplayName(String displayName) async {
-    try {
-      emit(ProfileLoading());
+    //   try {
+    //     emit(ProfileLoading());
 
-      final user = _firebaseAuth.currentUser;
-      if (user != null) {
-        // Update display name di Firebase
-        await user.updateDisplayName(displayName);
-        // Reload user data
-        await user.reload();
+    //     final user = _firebaseAuth.currentUser;
+    //     if (user != null) {
+    //       // Update display name di Firebase
+    //       await user.updateDisplayName(displayName);
+    //       // Reload user data
+    //       await user.reload();
 
-        // Load updated profile
-        await loadUserProfile();
-      } else {
-        emit(const ProfileError('User tidak ditemukan'));
-      }
-    } catch (e) {
-      emit(ProfileError('Error updating profile: $e'));
-    }
+    //       // Load updated profile
+    //       await loadUserProfile();
+    //     } else {
+    //       emit(const ProfileError('User tidak ditemukan'));
+    //     }
+    //   } catch (e) {
+    //     emit(ProfileError('Error updating profile: $e'));
+    //   }
   }
 }

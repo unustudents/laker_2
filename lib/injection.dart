@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
 import 'features/data/datasources/remote/home_remote.dart';
@@ -102,7 +101,6 @@ Future<void> init() async {
   );
 
   // FIREBASE AUTH
-  dI.registerLazySingleton(() => FirebaseAuth.instance);
 
   dI.registerLazySingleton(() => Supabase.instance.client);
 }
