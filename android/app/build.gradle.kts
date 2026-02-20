@@ -18,15 +18,15 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.unustudents.laker2"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "29.0.14206865"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
@@ -46,19 +46,23 @@ android {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
     }
 
-     signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                keyAlias = keystoreProperties["keyAlias"]?.toString()
+                keyPassword = keystoreProperties["keyPassword"]?.toString()
+                storeFile = file(keystoreProperties["storeFile"]?.toString() ?: "")
+                storePassword = keystoreProperties["storePassword"]?.toString()
+            }
         }
     }
 
     buildTypes {
         release {
-            // Signing configuration
-            signingConfig = signingConfigs.getByName("release")
+            if(keystorePropertiesFile.exists()){
+                // Signing configuration
+                signingConfig = signingConfigs.getByName("release")
+            }
             
             // Enable code shrinking, obfuscation, and optimization
             isMinifyEnabled = true
@@ -71,9 +75,9 @@ android {
             )
             
             // Additional security flags
-            ndk {
-                debugSymbolLevel = "FULL"
-            }
+            // ndk {
+            //     debugSymbolLevel = "FULL"
+            // }
         }
     }
 }
