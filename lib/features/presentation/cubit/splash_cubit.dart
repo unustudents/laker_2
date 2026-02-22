@@ -1,5 +1,8 @@
+import 'dart:io' show Platform;
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'splash_state.dart';
@@ -15,29 +18,60 @@ class SplashCubit extends Cubit<SplashState> {
 
   /// Initialize splash screen and handle authentication routing
   Future<void> initializeSplash() async {
-    try {
-      // Emit loading state untuk menunjukkan splash screen sedang loading
-      emit(SplashLoading());
+    // Pengecekan platform tetap di awal, tapi tidak perlu return agar
+    // platform lain tetap bisa lanjut ke Supabase check.
 
-      // Set immersive UI mode (fullscreen tanpa status bar dan navigation bar)
+    try {
+      // 1. Emit loading dan atur UI
+      emit(SplashLoading());
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-      // Delay selama 3 detik untuk menampilkan splash screen dengan baik
+      // 2. Blok khusus In-App Update (Try-Catch Terpisah)
+      if (Platform.isAndroid) {
+        try {
+          final updateInfo = await InAppUpdate.checkForUpdate();
+
+          if (updateInfo.updateAvailability ==
+              UpdateAvailability.updateAvailable) {
+            emit(SplashUpdateStatus(UpdateStatus.available));
+
+            // Jalankan startFlexibleUpdate TANPA await agar tidak memblokir splash screen.
+            // Download berjalan di background.
+            InAppUpdate.startFlexibleUpdate()
+                .then((_) {
+                  // Akan terpicu setelah download selesai
+                  emit(SplashUpdateStatus(UpdateStatus.downloaded));
+                  InAppUpdate.completeFlexibleUpdate();
+                })
+                .catchError((e) {
+                  // Abaikan jika user cancel update
+                  print("Flexible update dibatalkan atau error: $e");
+                });
+          } else {
+            emit(SplashUpdateStatus(UpdateStatus.notAvailable));
+          }
+        } catch (e) {
+          // ERROR UPDATE DITANGKAP DI SINI
+          // Biasa terjadi saat run di Emulator/Debug karena tidak ada Play Store
+          // Eksekusi kode TIDAK AKAN lompat ke catch utama
+          print('In-App Update error (Bisa diabaikan jika mode Debug): $e');
+          emit(SplashUpdateStatus(UpdateStatus.notAvailable));
+        }
+      }
+
+      // 3. Delay untuk estetika Splash Screen
       await Future.delayed(const Duration(seconds: 3));
 
-      // Cek session Supabase untuk user yang sudah authenticated
+      // 4. Lanjut ke pengecekan Session Supabase
       final session = _supabaseClient.auth.currentSession;
 
-      // Jika ada session, user sudah login (session.user pasti not null)
       if (session != null) {
-        // Navigate ke Home screen
         emit(SplashNavigateToHome());
       } else {
-        // Tidak ada session, user harus login
         emit(SplashNavigateToSignIn());
       }
     } catch (e) {
-      // Tangani error saat initialize splash
+      // Tangani error krusial (seperti error dari Supabase)
       emit(SplashError('Kesalahan saat initialize splash: ${e.toString()}'));
     }
   }

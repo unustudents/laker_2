@@ -75,9 +75,9 @@ android {
             )
             
             // Additional security flags
-            // ndk {
-            //     debugSymbolLevel = "FULL"
-            // }
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
     }
 }

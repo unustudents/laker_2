@@ -8,7 +8,6 @@ import '../features/presentation/cubit/materi_cubit.dart';
 import '../features/presentation/cubit/post_test_cubit.dart';
 import '../features/presentation/cubit/pre_test_cubit.dart';
 import '../features/presentation/cubit/profile_cubit.dart';
-import '../features/domain/usecases/pretest_usecase.dart' show PretestUseCase;
 import '../features/presentation/cubit/signin_cubit.dart';
 import '../features/presentation/cubit/signup_cubit.dart';
 import '../features/presentation/cubit/splash_cubit.dart';

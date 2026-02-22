@@ -21,7 +21,7 @@ class ProfileLoading extends ProfileState {
 /// Successful state dengan user profile data
 class ProfileLoaded extends ProfileState {
   /// User data map dengan keys: uid, nama, email, photoUrl
-  final Map<String, dynamic> userData;
+  final ProfilEntity userData;
 
   const ProfileLoaded(this.userData);
 

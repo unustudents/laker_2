@@ -227,8 +227,8 @@ class ProfileScreen extends StatelessWidget {
     if (state is ProfileLoaded) {
       return _buildProfileBody(
         context,
-        userName: state.userData['nama'] ?? 'Unknown User',
-        userEmail: state.userData['email'] ?? 'No email',
+        userName: state.userData.nama,
+        userEmail: state.userData.email,
         isSigningOut: false,
       );
     }
@@ -363,7 +363,7 @@ class ProfileScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 context.read<ProfileCubit>().signout();
-                if (context.mounted) Navigator.pop(context);
+                // if (context.mounted) Navigator.pop(context);
               },
               child: const Text('Iya'),
             ),

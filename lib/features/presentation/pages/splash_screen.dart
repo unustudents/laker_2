@@ -79,6 +79,22 @@ class SplashScreen extends HookWidget {
 
     return BlocListener<SplashCubit, SplashState>(
       listener: (context, state) {
+        // if (state is SplashUpdateStatus) {
+        //   state.updateStatus == UpdateStatus.available
+        //       ? ScaffoldMessenger.of(context).showSnackBar(
+        //           const SnackBar(
+        //             content: Text('Update available! Downloading...'),
+        //           ),
+        //         )
+        //       : state.updateStatus == UpdateStatus.downloaded
+        //       ? ScaffoldMessenger.of(context).showSnackBar(
+        //           const SnackBar(
+        //             content: Text('Update downloaded! Restart app to apply.'),
+        //           ),
+        //         )
+        //       : null;
+        //   // Handle update status changes if needed
+        // } else
         if (state is SplashNavigateToHome) {
           HomeRoute().pushReplacement(context);
         } else if (state is SplashNavigateToSignIn) {

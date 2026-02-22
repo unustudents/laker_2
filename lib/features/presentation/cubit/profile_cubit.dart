@@ -1,5 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:laker_2/features/domain/entities/profil_entity.dart';
+import 'package:laker_2/features/domain/usecases/profil_usecase.dart';
+
+import '../../../supabase_config.dart';
 
 part 'profile_state.dart';
 
@@ -17,8 +21,11 @@ part 'profile_state.dart';
 /// - [ProfileError]: Error ketika fetch data atau signout
 class ProfileCubit extends Cubit<ProfileState> {
   // final FirebaseAuth _firebaseAuth;
+  final ProfilUsecase _profilUsecase;
 
-  ProfileCubit() : super(ProfileInitial()) {
+  ProfileCubit({required ProfilUsecase profilUsecase})
+    : _profilUsecase = profilUsecase,
+      super(ProfileInitial()) {
     // Load user profile saat cubit dibuat
     loadUserProfile();
   }
@@ -28,6 +35,12 @@ class ProfileCubit extends Cubit<ProfileState> {
   /// Mengambil data user dari FirebaseAuth.instance.currentUser
   /// Emit ProfileLoaded jika berhasil, ProfileError jika gagal
   Future<void> loadUserProfile() async {
+    emit(ProfileLoading());
+    final result = await _profilUsecase.call();
+    result.fold(
+      (failure) => emit(ProfileError(failure.msg)),
+      (profil) => emit(ProfileLoaded(profil)),
+    );
     // try {
     //   emit(ProfileLoading());
 
@@ -57,6 +70,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   /// Emit ProfileSignoutSuccess jika berhasil
   /// Emit ProfileError jika gagal
   Future<void> signout() async {
+    await SupabaseConfig.client.auth.signOut(scope: SignOutScope.global);
     // try {
     //   emit(ProfileSigningOut());
 
