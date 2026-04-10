@@ -252,20 +252,20 @@ class ProfileScreen extends StatelessWidget {
     required bool isSigningOut,
   }) {
     List listProfil = [
-      {
-        'title': 'Update Profil',
-        'icon': Icons.person_outline,
-        'onTap': () => ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Update Profil - Coming Soon')),
-        ),
-      },
-      {
-        'title': 'Update Kata Sandi',
-        'icon': Icons.security,
-        'onTap': () => ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Update Kata Sandi - Coming Soon')),
-        ),
-      },
+      // {
+      //   'title': 'Update Profil',
+      //   'icon': Icons.person_outline,
+      //   'onTap': () => ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('Update Profil - Coming Soon')),
+      //   ),
+      // },
+      // {
+      //   'title': 'Update Kata Sandi',
+      //   'icon': Icons.security,
+      //   'onTap': () => ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('Update Kata Sandi - Coming Soon')),
+      //   ),
+      // },
       {
         'title': 'Keluar',
         'icon': Icons.exit_to_app,

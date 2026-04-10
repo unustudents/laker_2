@@ -116,18 +116,18 @@ class HomeScreen extends StatelessWidget {
                 // const SizedBox(height: 28),
 
                 // PROFIL PMII SECTION
-                // Text(
-                //   'Profil PMII',
-                //   // TODO: Uncomment saat styleBold20 ready
-                //   // style: styleBold20(),
-                //   style: const TextStyle(
-                //     fontSize: 20,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
-                // const SizedBox(height: 16),
-                // const HomeProfilePMII(),
-                // const SizedBox(height: 28),
+                Text(
+                  'Profil PMII',
+                  // TODO: Uncomment saat styleBold20 ready
+                  // style: styleBold20(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const HomeProfilePMII(),
+                const SizedBox(height: 28),
 
                 // KATEGORI KUIS SECTION
                 Text(
