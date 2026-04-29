@@ -19,15 +19,17 @@ class PreTestLoaded extends PreTestState {
   final List<PretestEntity> soals;
   final int currentIndex;
   final Map<int, String> userAnswers;
+  final Map<int, Map<String, dynamic>> record;
 
   const PreTestLoaded({
     required this.soals,
     required this.currentIndex,
     required this.userAnswers,
+    this.record = const {},
   });
 
   @override
-  List<Object?> get props => [soals];
+  List<Object?> get props => [soals, currentIndex, userAnswers, record];
 }
 
 class PreTestError extends PreTestState {

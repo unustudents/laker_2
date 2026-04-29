@@ -205,7 +205,11 @@ class PreTestScreen extends HookWidget {
                       if (currentIndex.value < state.soals.length - 1) {
                         currentIndex.value++;
                       } else {
-                        _showFinishDialog(context);
+                        _showFinishDialog(
+                          context,
+                          state as PreTestLoaded,
+                          context.read<PreTestCubit>(),
+                        );
                       }
                     },
                     child: Text(
@@ -223,21 +227,39 @@ class PreTestScreen extends HookWidget {
     );
   }
 
-  void _showFinishDialog(BuildContext context) {
+  void _showFinishDialog(
+    BuildContext context,
+    PreTestLoaded state,
+    PreTestCubit cubit,
+  ) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text("Selesaikan Kuis"),
         content: const Text(
           "Apakah kamu sudah yakin ingin menyelesaikan kuis ini?",
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text("Batal"),
           ),
           TextButton(
-            onPressed: () => HomeRoute().go(context),
+            onPressed: () {
+              Navigator.pop(dialogContext); // Tutup dialog
+
+              int totalSoal = state.soals.length;
+              int jawabanBenar = cubit.hitungJawabanBenar();
+
+              // Hitung persentase (0-100)
+              int scoreAkhir = 0;
+              if (totalSoal > 0) {
+                scoreAkhir = ((jawabanBenar / totalSoal) * 100).round();
+              }
+
+              // Navigasi ke ResultScreen
+              ResultRoute(score: scoreAkhir).go(context);
+            },
             child: const Text("Yakin"),
           ),
         ],
