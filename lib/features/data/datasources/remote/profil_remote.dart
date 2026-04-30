@@ -6,6 +6,12 @@ import '../../models/profil_model.dart';
 
 abstract class ProfilRemoteDataSource {
   Future<ProfilModel> profil();
+  Future<void> updateProfil({
+    required String nama,
+    required String tempLahir,
+    required String divisi,
+    required String wa,
+  });
 }
 
 class ProfilRemoteDataSourceImpl implements ProfilRemoteDataSource {
@@ -29,5 +35,23 @@ class ProfilRemoteDataSourceImpl implements ProfilRemoteDataSource {
     }
 
     return ProfilModel.fromJson(response.first);
+  }
+
+  @override
+  Future<void> updateProfil({
+    required String nama,
+    required String tempLahir,
+    required String divisi,
+    required String wa,
+  }) async {
+    await _supabase
+        .from(Db.luTable)
+        .update({
+          Db.luName: nama,
+          Db.luTempLahir: tempLahir,
+          Db.luDivisi: divisi,
+          Db.luWa: wa,
+        })
+        .eq(Db.luId, _supabase.auth.currentUser!.id);
   }
 }

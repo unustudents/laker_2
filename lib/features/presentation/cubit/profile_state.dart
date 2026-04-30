@@ -39,6 +39,21 @@ class ProfileSignoutSuccess extends ProfileState {
   const ProfileSignoutSuccess();
 }
 
+/// Loading state saat sedang proses update profil
+class ProfileUpdating extends ProfileState {
+  const ProfileUpdating();
+}
+
+/// Successful update state dengan data profil terbaru
+class ProfileUpdateSuccess extends ProfileState {
+  final ProfilEntity userData;
+
+  const ProfileUpdateSuccess(this.userData);
+
+  @override
+  List<Object?> get props => [userData];
+}
+
 /// Error state dengan error message
 class ProfileError extends ProfileState {
   /// Error message

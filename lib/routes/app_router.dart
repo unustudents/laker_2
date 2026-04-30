@@ -88,8 +88,14 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider(
-      create: (context) => dI<HomeCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => dI<HomeCubit>()),
+        // ProfileCubit diletakkan di sini agar menjadi single instance
+        // yang di-share oleh HomeScreen, ProfileScreen, dan UpdateProfileScreen.
+        // Sehingga update profil langsung terrefleksi di semua screen.
+        BlocProvider(create: (context) => dI<ProfileCubit>()),
+      ],
       child: const HomeScreen(),
     );
   }
@@ -168,10 +174,9 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider(
-      create: (context) => dI<ProfileCubit>(),
-      child: const ProfileScreen(),
-    );
+    // ProfileCubit sudah disediakan oleh HomeRoute (ancestor),
+    // tidak perlu buat instance baru agar state tetap konsisten.
+    return const ProfileScreen();
   }
 }
 

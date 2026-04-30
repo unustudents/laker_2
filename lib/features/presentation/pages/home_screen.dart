@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constant/constants.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../routes/app_router.dart';
-import '../../domain/entities/home_entity.dart';
-import '../cubit/home_cubit.dart';
+import '../cubit/profile_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -62,21 +61,18 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontSize: 16,
-                        // TODO: Use responsive font size
-                        // fontSize: 16.0.sp,
                       ),
                     ),
-                    BlocSelector<HomeCubit, HomeState, HomeLoaded>(
+                    // Nama diambil dari ProfileCubit sebagai single source of truth,
+                    // sehingga otomatis update ketika profil diubah.
+                    BlocSelector<ProfileCubit, ProfileState, String>(
                       selector: (state) {
-                        return state.props.isNotEmpty && state is HomeLoaded
-                            ? state
-                            : HomeLoaded(home: HomeEntity(nama: 'User'));
+                        if (state is ProfileLoaded) return state.userData.nama;
+                        return 'User';
                       },
-                      builder: (context, state) {
+                      builder: (context, nama) {
                         return Text(
-                          "${state.home.nama} !",
-                          // TODO: Uncomment saat styleBold16 ready
-                          // style: styleBold16(),
+                          "$nama !",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,

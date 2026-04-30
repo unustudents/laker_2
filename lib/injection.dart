@@ -20,6 +20,7 @@ import 'features/domain/usecases/home_usecase.dart';
 import 'features/domain/usecases/pretest_usecase.dart'
     show PretestUseCase, SubmitAnswerUsecase;
 import 'features/domain/usecases/profil_usecase.dart';
+import 'features/domain/usecases/update_profil_usecase.dart';
 import 'features/domain/usecases/signin_usecase.dart' show SigninUsecase;
 import 'features/domain/usecases/signup_usecase.dart';
 import 'features/presentation/cubit/home_cubit.dart';
@@ -42,7 +43,12 @@ Future<void> init() async {
 
   dI.registerFactory(() => SplashCubit());
 
-  dI.registerFactory(() => ProfileCubit(profilUsecase: dI<ProfilUsecase>()));
+  dI.registerFactory(
+    () => ProfileCubit(
+      profilUsecase: dI<ProfilUsecase>(),
+      updateProfilUsecase: dI<UpdateProfilUsecase>(),
+    ),
+  );
 
   dI.registerFactoryParam<PreTestCubit, int, dynamic>(
     (idKategori, _) => PreTestCubit(
@@ -70,6 +76,8 @@ Future<void> init() async {
   dI.registerLazySingleton(() => HomeUsecase(dI<HomeRepository>()));
 
   dI.registerLazySingleton(() => ProfilUsecase(dI<ProfilRepository>()));
+
+  dI.registerLazySingleton(() => UpdateProfilUsecase(dI<ProfilRepository>()));
 
   // REPOSITORY
   dI.registerLazySingleton<SigninRepository>(

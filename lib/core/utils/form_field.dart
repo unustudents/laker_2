@@ -111,15 +111,24 @@ class Formulir {
   static TextFormField formReguler({
     String? labelText,
     TextEditingController? controller,
+    bool readOnly = false,
   }) {
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
-      decoration: InputDecoration(labelText: labelText),
+      readOnly: readOnly,
+      decoration: InputDecoration(
+        labelText: labelText,
+        // Beri visual hint bahwa field ini tidak bisa diedit
+        filled: readOnly,
+        fillColor: readOnly ? Colors.grey.withOpacity(0.1) : null,
+      ),
       minLines: 1,
       maxLines: 5,
       textCapitalization: TextCapitalization.words,
       validator: (value) {
+        // Skip validasi untuk field read-only
+        if (readOnly) return null;
         if (_isNullOrBlank(value)) return 'Kolom wajib diisi';
 
         return null;

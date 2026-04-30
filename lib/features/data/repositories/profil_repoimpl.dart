@@ -24,4 +24,28 @@ class ProfilRepositoryImpl implements ProfilRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, ProfilEntity>> updateProfil({
+    required String nama,
+    required String tempLahir,
+    required String divisi,
+    required String wa,
+  }) async {
+    try {
+      await _remoteDataSource.updateProfil(
+        nama: nama,
+        tempLahir: tempLahir,
+        divisi: divisi,
+        wa: wa,
+      );
+      // Fetch ulang data terbaru setelah update berhasil
+      final profilModel = await _remoteDataSource.profil();
+      return Right(profilModel.toEntity());
+    } catch (e) {
+      return Left(
+        ServerFailure("Gagal mengupdate profil: ${e.toString()}"),
+      );
+    }
+  }
 }
