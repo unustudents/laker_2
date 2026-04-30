@@ -55,12 +55,27 @@ class PretestOptionModel extends Equatable {
   });
 
   factory PretestOptionModel.fromJson(Map<String, dynamic> json) {
+    // print("DEBUG Option JSON: $json"); // Uncomment to debug JSON fields
+    // bool parsedIsCorrect = false;
+    // final isCorrectVal =
+    //     json['is_correct'] ?? json['isCorrect'] ?? json['iscorrect'];
+
+    // if (isCorrectVal is bool) {
+    //   parsedIsCorrect = isCorrectVal;
+    // } else if (isCorrectVal is int) {
+    //   parsedIsCorrect = isCorrectVal == 1;
+    // } else if (isCorrectVal is String) {
+    //   parsedIsCorrect =
+    //       isCorrectVal.toLowerCase() == 'true' || isCorrectVal == '1';
+    // }
+
     return PretestOptionModel(
-      id: json['id'] as int? ?? 0,
-      idPretest: json['id_pretest'] as int? ?? 0,
-      pilihan: json['pilihan'] as String? ?? '',
-      isCorrect: json['is_correct'] as bool? ?? false,
-      label: json['label'] as String? ?? '',
+      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      idPretest: int.tryParse(json['id_pretest']?.toString() ?? '0') ?? 0,
+      pilihan: json['pilihan']?.toString() ?? '',
+      // isCorrect: parsedIsCorrect,
+      isCorrect: json['is_correct'] ?? false,
+      label: json['label']?.toString() ?? '',
     );
   }
 
@@ -114,12 +129,25 @@ class UserAnswerModel extends Equatable {
   });
 
   factory UserAnswerModel.fromJson(Map<String, dynamic> json) {
+    bool parsedIsCorrect = false;
+    final isCorrectVal =
+        json['is_correct'] ?? json['isCorrect'] ?? json['iscorrect'];
+
+    if (isCorrectVal is bool) {
+      parsedIsCorrect = isCorrectVal;
+    } else if (isCorrectVal is int) {
+      parsedIsCorrect = isCorrectVal == 1;
+    } else if (isCorrectVal is String) {
+      parsedIsCorrect =
+          isCorrectVal.toLowerCase() == 'true' || isCorrectVal == '1';
+    }
+
     return UserAnswerModel(
       // id: json['id'] as String?,
-      idUser: json['id_user'] as String? ?? '',
-      idPretest: json['id_pretest'] as int? ?? 0,
-      option: json['option'] as String? ?? '',
-      isCorrect: json['is_correct'] as bool? ?? false,
+      idUser: json['id_user']?.toString() ?? '',
+      idPretest: int.tryParse(json['id_pretest']?.toString() ?? '0') ?? 0,
+      option: json['option']?.toString() ?? '',
+      isCorrect: parsedIsCorrect,
     );
   }
 

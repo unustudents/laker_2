@@ -27,20 +27,34 @@ class PreTestCubit extends Cubit<PreTestState> {
 
     result.fold(
       (failure) => emit(PreTestError(failure.msg)),
-      (soals) =>
-          emit(PreTestLoaded(soals: soals, currentIndex: 0, userAnswers: {}, record: {})),
+      (soals) => emit(
+        PreTestLoaded(
+          soals: soals,
+          currentIndex: 0,
+          userAnswers: {},
+          record: {},
+        ),
+      ),
     );
   }
 
-  Future<void> submitJawabanPretest({required PretestOptionEntity data}) async {
+  Future<void> submitJawabanPretest({
+    required PretestOptionEntity data,
+    required int questionIndex,
+  }) async {
     final currentState = state;
     if (currentState is! PreTestLoaded) return;
 
     final updatedAnswer = Map<int, String>.from(currentState.userAnswers);
-    updatedAnswer[currentState.currentIndex] = data.label;
+    updatedAnswer[questionIndex] = data.label;
 
-    final updatedRecord = Map<int, Map<String, dynamic>>.from(currentState.record);
-    updatedRecord[currentState.currentIndex] = {'current': data.label, 'status': data.isCorrect};
+    final updatedRecord = Map<int, Map<String, dynamic>>.from(
+      currentState.record,
+    );
+    updatedRecord[questionIndex] = {
+      'current': data.label,
+      'status': data.isCorrect,
+    };
 
     // Emit state agar UI langsung terupdate secara lokal (optimistic update)
     emit(
@@ -54,18 +68,27 @@ class PreTestCubit extends Cubit<PreTestState> {
 
     final result = await _submitAnswerUseCase(data: data);
 
-    result.fold(
-      (failure) => emit(PreTestError(failure.msg)),
-      (userAnswer) {
-        // Jika sukses, biarkan state karena sudah terupdate secara optimis di atas
-        // atau Anda bisa melakukan emit ulang bila diperlukan.
-      },
-    );
+    result.fold((failure) => emit(PreTestError(failure.msg)), (userAnswer) {
+      // Jika sukses, biarkan state karena sudah terupdate secara optimis di atas
+      // atau Anda bisa melakukan emit ulang bila diperlukan.
+    });
   }
 
   int hitungJawabanBenar() {
     final currentState = state;
     if (currentState is! PreTestLoaded) return 0;
+
+    // print("=== DEBUG hitungJawabanBenar ===");
+    // print("Record: ${currentState.record}");
+    // for (int i = 0; i < currentState.soals.length; i++) {
+    //   final soal = currentState.soals[i];
+    //   print("Soal $i:");
+    //   for (var opt in soal.options) {
+    //     print(
+    //       "  Option: ${opt.label} - ${opt.pilihan} - isCorrect: ${opt.isCorrect}",
+    //     );
+    //   }
+    // }
 
     int jawabanBenar = 0;
     for (var value in currentState.record.values) {
@@ -73,6 +96,8 @@ class PreTestCubit extends Cubit<PreTestState> {
         jawabanBenar++;
       }
     }
+    // print("jawabanBenar : $jawabanBenar");
+    // print("================================ ${currentState.record.values}");
     return jawabanBenar;
   }
 }

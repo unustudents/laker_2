@@ -134,6 +134,7 @@ class PreTestScreen extends HookWidget {
                             };
                             context.read<PreTestCubit>().submitJawabanPretest(
                               data: option,
+                              questionIndex: currentIndex.value,
                             );
                           },
                           child: Container(
@@ -207,7 +208,7 @@ class PreTestScreen extends HookWidget {
                       } else {
                         _showFinishDialog(
                           context,
-                          state as PreTestLoaded,
+                          state,
                           context.read<PreTestCubit>(),
                         );
                       }
